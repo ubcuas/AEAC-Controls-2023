@@ -1,7 +1,7 @@
 """ This class is an instance of a single PCA9685 board PWM channel """
 
 import sys
-sys.path.append('./aeac_controls_2023/')
+# sys.path.append('./aeac_controls_2023/')
 from constants import I2C_BUS
 from utils import getCounterValues
 from pwm import PWM
@@ -12,6 +12,7 @@ class PCA9685:
         self.current_state = 0
         self.channel = channel
         self.debug = debug
+        print("CHANNEL: {}, {}, {}, {}".format(hex(self.channel[0]), hex(self.channel[1]), hex(self.channel[2]), hex(self.channel[3])))
 
     def reset(self, pwm):
         # reset PCA9685
