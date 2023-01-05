@@ -59,64 +59,6 @@ class CabineControl:
         self.actuonix_rail.off(self.pwm)
 
         uaslog.info("Motor System init complete! Starting main routine...")
-
-    def closeDoor(self):
-        # servo close door
-        self.pwm.setPWMFreq(MOTORS["servo_door"]["frequency"])
-        self.hexatronik.setPWM(self.pwm, dutycycle=MOTORS["servo_door"]["dc_out"])
-
-        time.sleep(0.5)     # wait for servo to stop moving before turning off
-        self.hexatronik.off(self.pwm)   # turn off to avoid burning servo with high frequency
-        
-        # actuator lock door
-        self.pwm.setPWMFreq(MOTORS["actuonix_PQ12R_door"]["frequency"])
-        self.actuonix_door.setPWM(self.pwm, dutycycle=MOTORS["actuonix_PQ12R_door"]["dc_out"])
-
-        time.sleep(0.5)
-        self.actuonix_door.off(self.pwm)
-
-        # turn off frequency for motor safety
-        self.pwm.setPWMFreq(0)
-
-    def openDoor(self):
-        # actuator unlock door
-        self.pwm.setPWMFreq(MOTORS["actuonix_PQ12R_door"]["frequency"])
-        self.actuonix_door.setPWM(self.pwm, dutycycle=MOTORS["actuonix_PQ12R_door"]["dc_in"])
-
-        time.sleep(0.5)
-        self.actuonix_door.off(self.pwm)
-
-        # servo open door
-        self.pwm.setPWMFreq(MOTORS["servo_door"]["frequency"])
-        self.hexatronik.setPWM(self.pwm, dutycycle=MOTORS["servo_door"]["dc_in"])
-
-        time.sleep(0.5)     # wait for servo to stop moving before turning off
-        self.hexatronik.off(self.pwm)   # turn off to avoid burning servo with high frequency
-    
-        # turn off frequency for motor safety
-        self.pwm.setPWMFreq(0)
-
-    def seatbeltOn(self):
-        # actuator unlock door
-        self.pwm.setPWMFreq(MOTORS["actuonix_PQ12R_rail"]["frequency"])
-        self.actuonix_rail.setPWM(self.pwm, dutycycle=MOTORS["actuonix_PQ12R_rail"]["dc_out"])
-
-        time.sleep(0.5)
-        self.actuonix_rail.off(self.pwm)
-
-        # turn off frequency for motor safety
-        self.pwm.setPWMFreq(0)
-
-    def seatbeltOff(self):
-        # actuator unlock door
-        self.pwm.setPWMFreq(MOTORS["actuonix_PQ12R_rail"]["frequency"])
-        self.actuonix_rail.setPWM(self.pwm, dutycycle=MOTORS["actuonix_PQ12R_rail"]["dc_in"])
-
-        time.sleep(0.5)
-        self.actuonix_rail.off(self.pwm)
-
-        # turn off frequency for motor safety
-        self.pwm.setPWMFreq(0)
     
     def controlLoop(self):
         try:

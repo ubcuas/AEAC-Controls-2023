@@ -15,11 +15,6 @@ uaslog = logging.getLogger("UASlogger")
 
 class Servo:
     def __init__(self):
-        ############################
-        # INIT MOTOR TARGET VALUES #
-        ############################
-        self.target_hextronik = [0] #[in/out]
-
         ##################
         # INIT GPIO PINS #
         ##################
@@ -55,7 +50,7 @@ class Servo:
 
                 self.hexatronik.setPWM(self.pwm, dutycycle=dc)
                 
-        except Exception as e:
+        except KeyboardInterrupt as e:
             uaslog.warning(f"{e}\nServo Test Complete.")
             self.cleanup()
             sys.exit(0)

@@ -12,7 +12,6 @@ class PCA9685:
         self.current_state = 0
         self.channel = channel
         self.debug = debug
-        print("CHANNEL: {}, {}, {}, {}".format(hex(self.channel[0]), hex(self.channel[1]), hex(self.channel[2]), hex(self.channel[3])))
 
     def reset(self, pwm):
         # reset PCA9685
@@ -29,5 +28,14 @@ class PCA9685:
         if self.debug:
             print("Delay: {}, Duty Cycle: {}".format(delay, dutycycle))
             print("ON: {}, {}, OFF: {}, {}".format(on_count, hex(on_count), off_count, hex(off_count)))
+        
+        pwm.setPWMCounters(self.channel, I2C_BUS, on_hex, off_hex)
+
+    def off(self, pwm, delay=0):
+        on_count, off_count = getCounterValues(delay, 0)
+        on_hex, off_hex = int(hex(on_count), base=16), int(hex(off_count), base=16)
+
+        if self.debug:
+            print("Motor OFF")
         
         pwm.setPWMCounters(self.channel, I2C_BUS, on_hex, off_hex)

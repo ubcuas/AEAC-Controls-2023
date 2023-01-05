@@ -1,26 +1,28 @@
 # motor specs as a dict
+from constants import *
 
 MOTORS = {
     "actuonix_PQ12R_door": {
         "position": "door",
         "frequency": 300, # hz
-        "dc_low": 60,     # 30-60%
-        "dc_high": 30,
-        "driver_pins": [], # pwm1, pwm2
+        "dc_in": 63,     # 30-60%
+        "dc_out": 30,
+        "channel": CHANNEL4,
         "stroke": 0,   # mm
     },
     "servo_door": {
         "position": "door",
-        "frequency": 300,   # hz
-        "dc_low": 28,     # 28-64%
-        "dc_high": 64,
+        "frequency": 50,   # hz
+        "dc_in": 1,     # 
+        "dc_out": 12,
+        "channel": CHANNEL0,
     },
-    "actuonix_PQ12R_rails": {
+    "actuonix_PQ12R_rail": {
         "position": "seat",
         "frequency": 300, # hz
-        "dc_low": 60,     # 30-60%
-        "dc_high": 30,
-        "driver_pins": [], # pwm1, pwm2
+        "dc_in": 63,     # 30-60%
+        "dc_out": 30,
+        "channel": CHANNEL5,
         "stroke": 0,   # mm
     }
 }

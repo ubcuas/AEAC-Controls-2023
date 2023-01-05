@@ -1,4 +1,7 @@
-# aeac_controls_2023
+# AEAC-Controls-2023
+
+PCA9685 Datasheet and Register Information:  
+https://www.digikey.ca/htmldatasheets/production/1640697/0/0/1/PCA9685-Datasheet.pdf
 
 ## Requirements
 ### I2C Tools
