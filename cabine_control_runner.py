@@ -19,15 +19,9 @@ def main():
 
     try:
         while True:
-            # get updated values (done from software side importing cabine control submodule)
-            buttonA = wpi.digitalRead(PIN_A)   # A
-            buttonB = wpi.digitalRead(PIN_B)   # B
-            buttonX = wpi.digitalRead(PIN_X)   # X
-            buttonY = wpi.digitalRead(PIN_Y)  # Y
-
-            # set values
-            cabinectrl.setRemoteValues(buttonA, buttonB, buttonX, buttonY, ljs_x, ljs_y, 1, 0.0, 0.0, 1)
-    
+            # get updated values (done from software side when importing cabine control as submodule)
+            cabinectrl.arm = int(input("[0] to un-secure cabin\n [1] to secure cabin\n"))
+            
     except Exception as e:
         print(f"{e}\nExiting Cabine Control Runner.")
         cabinectrl.cleanup()

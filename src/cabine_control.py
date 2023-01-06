@@ -19,6 +19,12 @@ class CabineControl:
         ##################
         self.init_gpio()
 
+        ########################
+        # INIT SOFTWARE INPUTS #
+        ########################
+        self.arm = 0
+        self.mode = CabineControlStatus.IDLE
+
         ############
         # INIT PWM #
         ############
@@ -62,6 +68,7 @@ class CabineControl:
 
     def closeDoor(self):
         # servo close door
+        uaslog.info("Closing door...")
         self.pwm.setPWMFreq(MOTORS["servo_door"]["frequency"])
         self.hexatronik.setPWM(self.pwm, dutycycle=MOTORS["servo_door"]["dc_out"])
 
@@ -69,6 +76,7 @@ class CabineControl:
         self.hexatronik.off(self.pwm)   # turn off to avoid burning servo with high frequency
         
         # actuator lock door
+        uaslog.info("Locking door...")
         self.pwm.setPWMFreq(MOTORS["actuonix_PQ12R_door"]["frequency"])
         self.actuonix_door.setPWM(self.pwm, dutycycle=MOTORS["actuonix_PQ12R_door"]["dc_out"])
 
@@ -80,6 +88,7 @@ class CabineControl:
 
     def openDoor(self):
         # actuator unlock door
+        uaslog.info("Unlocking door...")
         self.pwm.setPWMFreq(MOTORS["actuonix_PQ12R_door"]["frequency"])
         self.actuonix_door.setPWM(self.pwm, dutycycle=MOTORS["actuonix_PQ12R_door"]["dc_in"])
 
@@ -87,6 +96,7 @@ class CabineControl:
         self.actuonix_door.off(self.pwm)
 
         # servo open door
+        uaslog.info("Opening door...")
         self.pwm.setPWMFreq(MOTORS["servo_door"]["frequency"])
         self.hexatronik.setPWM(self.pwm, dutycycle=MOTORS["servo_door"]["dc_in"])
 
@@ -97,7 +107,8 @@ class CabineControl:
         self.pwm.setPWMFreq(0)
 
     def seatbeltOn(self):
-        # actuator unlock door
+        # seatbelt on
+        uaslog.info("Seatbelt on...")
         self.pwm.setPWMFreq(MOTORS["actuonix_PQ12R_rail"]["frequency"])
         self.actuonix_rail.setPWM(self.pwm, dutycycle=MOTORS["actuonix_PQ12R_rail"]["dc_out"])
 
@@ -108,7 +119,8 @@ class CabineControl:
         self.pwm.setPWMFreq(0)
 
     def seatbeltOff(self):
-        # actuator unlock door
+        # seatbelt off
+        uaslog.info("Seatbelt off...")
         self.pwm.setPWMFreq(MOTORS["actuonix_PQ12R_rail"]["frequency"])
         self.actuonix_rail.setPWM(self.pwm, dutycycle=MOTORS["actuonix_PQ12R_rail"]["dc_in"])
 
@@ -123,32 +135,21 @@ class CabineControl:
             uaslog.info("Starting Cabine Control Routine...")
 
             while True:
-                self.pwm.setPWMFreq(MOTORS["servo_door"]["frequency"])
-
-                dc = int(input("Enter Duty Cycle for Servo 1 [1,12]: "))
-                uaslog.info("Motor Position at DC {}".format(dc))
-                self.hexatronik.setPWM(self.pwm, dutycycle=dc)
-
-                time.sleep(0.5)     # wait for servo to stop moving before turning off
-                self.hexatronik.off(self.pwm)   # turn off to avoid burning servo with high frequency
-                self.pwm.setPWMFreq(MOTORS["actuonix_PQ12R_door"]["frequency"])
-
-                dc = int(input("Enter Duty Cycle for Actuonix 1 [30,63]: "))
-                uaslog.info("Motor Position at DC {}".format(dc))
-                self.actuonix_door.setPWM(self.pwm, dutycycle=dc)
-
-                time.sleep(0.5)
-                self.actuonix_door.off(self.pwm)
-
-                dc = int(input("Enter Duty Cycle for Actuonix 2 [30,63]: "))
-                uaslog.info("Motor Position at DC {}".format(dc))
-                self.actuonix_rail.setPWM(self.pwm, dutycycle=dc)
-
-                time.sleep(0.5) # let actuator move before switching freq
-                self.actuonix_rail.off(self.pwm)
+                if self.arm:    # ACOM drone arming signal
+                    if mode not CabinControlStatus.SECURED:     # secure cabine if not already secured
+                        self.seatbeltOn()
+                        time.sleep(1)
+                        self.closeDoor()
+                        time.sleep(1)
+                else:
+                    if mode not CabinControlStatus.UNSECURED:   # unsecure cabine if not already unsecured
+                        self.openDoor()
+                        time.sleep(1)
+                        self.seatbeltOff()
+                        time.sleep(1)
                 
         except KeyboardInterrupt as e:
-            uaslog.warning(f"{e}\nServo Test Complete.")
+            uaslog.warning(f"{e}\nCabine Control Routine Complete.")
             self.cleanup()
             sys.exit(0)
 
