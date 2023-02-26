@@ -1,7 +1,7 @@
 """ This class is an instance of a single PCA9685 board PWM channel """
 
 import sys
-# sys.path.append('./aeac_controls_2023/')
+sys.path.append('./aeac_controls_2023/')
 from constants import I2C_BUS
 from utils import getCounterValues
 from pwm import PWM
@@ -28,14 +28,5 @@ class PCA9685:
         if self.debug:
             print("Delay: {}, Duty Cycle: {}".format(delay, dutycycle))
             print("ON: {}, {}, OFF: {}, {}".format(on_count, hex(on_count), off_count, hex(off_count)))
-        
-        pwm.setPWMCounters(self.channel, I2C_BUS, on_hex, off_hex)
-
-    def off(self, pwm, delay=0):
-        on_count, off_count = getCounterValues(delay, 0)
-        on_hex, off_hex = int(hex(on_count), base=16), int(hex(off_count), base=16)
-
-        if self.debug:
-            print("Motor OFF")
         
         pwm.setPWMCounters(self.channel, I2C_BUS, on_hex, off_hex)

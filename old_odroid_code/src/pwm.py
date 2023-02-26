@@ -4,9 +4,9 @@ import sys
 import time
 import math
 from Adafruit_GPIO.I2C import Device as Adafruit_I2C
-# sys.path.append('./aeac_controls_2022/')
-from constants import MODE1, CLK, COUNT_SIZE, PRESCALE, I2C_CHIP, I2C_BUS
-# from utils import getCounterValues
+sys.path.append('./aeac_controls_2022/')
+from constants import MODE1, CLK, COUNT_SIZE, PRESCALE
+from utils import getCounterValues
 
 # ============================================================================
 # Adafruit PCA9685 16-Channel PWM Servo Driver
@@ -16,7 +16,7 @@ class PWM :
     i2c = None
 
     # need busnum, i2c_interface
-    def __init__(self, address=I2C_CHIP, busnum=I2C_BUS, debug=False):
+    def __init__(self, address=0x40, busnum=0, debug=False):
         self.i2c = Adafruit_I2C(address, busnum)
 
         self.address = address
@@ -42,7 +42,7 @@ class PWM :
         if self.debug:
             print("Final pre-scale: %d" % prescale)
 
-        oldmode = self.i2c.readU8(MODE1)
+        oldmode = self.i2c.readU8(MODE1);
         newmode = (oldmode & 0x7F) | 0x10             # sleep
        
         self.i2c.write8(MODE1, newmode)        # go to sleep
@@ -59,12 +59,7 @@ class PWM :
         if self.debug:
             print("Setting PWM at reg {} bus {}".format(reg, bus))
 
-        self.i2c.write8(reg[0], on & 0xFF)
-        self.i2c.write8(reg[1], on >> 8)
-        self.i2c.write8(reg[2], off & 0xFF)
-        self.i2c.write8(reg[3], off >> 8)
-
-        # self.i2c.write8(reg[0] + 4*bus, on & 0xFF)
-        # self.i2c.write8(reg[1] + 4*bus, on >> 8)
-        # self.i2c.write8(reg[2] + 4*bus, off & 0xFF)
-        # self.i2c.write8(reg[3] + 4*bus, off >> 8)
+        self.i2c.write8(reg[0] + 4*bus, on & 0xFF)
+        self.i2c.write8(reg[1] + 4*bus, on >> 8)
+        self.i2c.write8(reg[2] + 4*bus, off & 0xFF)
+        self.i2c.write8(reg[3] + 4*bus, off >> 8)
