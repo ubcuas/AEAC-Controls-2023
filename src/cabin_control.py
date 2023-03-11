@@ -15,8 +15,8 @@ class CabinControl:
         uaslog.debug("Setting up Arduino Uno Serial Port...")
         self.uno_port = serial.Serial(UNO_COM, 9600, timeout=0.5)
 
-        uaslog.debug("Setting up RFD900x Serial Port...")
-        self.rfd_port = serial.Serial(RFD_COM, 115200, timeout=0.5)
+        # uaslog.debug("Setting up RFD900x Serial Port...")
+        # self.rfd_port = serial.Serial(RFD_COM, 115200, timeout=0.5)
 
         ####################
         # INIT CABIN STATE #
@@ -31,12 +31,12 @@ class CabinControl:
         #################
         # CONFIG RFD TX #
         #################
-        self.rfd_port.write('ATPP'.encode('utf_8')) # check status
-        time.sleep(0.1)
-        self.rfd_port.write('ATPI=2'.encode('utf_8')) # set pin 2 as input
-        time.sleep(0.1)
-        self.rfd_port.write('ATPM=2'.encode('utf_8')) # set pin 2 mirroring
-        time.sleep(0.1)
+        # self.rfd_port.write('ATPP'.encode('utf_8')) # check status
+        # time.sleep(0.1)
+        # self.rfd_port.write('ATPI=2'.encode('utf_8')) # set pin 2 as input
+        # time.sleep(0.1)
+        # self.rfd_port.write('ATPM=2'.encode('utf_8')) # set pin 2 mirroring
+        # time.sleep(0.1)
 
     def controlLoop(self):
         try:

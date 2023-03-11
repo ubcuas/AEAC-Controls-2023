@@ -1,22 +1,46 @@
-#include <Servo.h>
+// Teensey 4.0 firware state machine for automating cabin belt and door systems using RFD input
+#define RFD_IN 0
+#define DOOR_SERVO 1
+#define DOOR_LOCK 2
+#define BELT_ACT 3
+#define LED_LEFT 4
+#define LED_BOTTOM 5
+#define LED_RIGHT 6
+// #define LED_OUT 1 // TEMP
 
-Servo servo;  // create servo object to control a servo
-
-int pos = 0;    // variable to store the servo position
+// cabin states
+#define OPEN 0
+#define SECURED 1
 
 void setup() {
-  servo.attach(9);  // attaches the servo on pin 9 to the servo object
+    // teensey serial config
+  Serial.begin(9600);
+
+  // INPUT PIN CONFIG
+  pinMode(RFD_IN, INPUT);
+
+  // OUTPUT PIN CONFIG
+  pinMode(RFD_IN, INPUT);
+
+  // PIN INIT VALUE
+  // digitalWrite(LED_OUT, OPEN);
 }
 
 void loop() {
-  for (pos = 0; pos <= 180; pos += 1) { // rotate from 0 degrees to 180 degrees
-    // in steps of 1 degree
-    servo.write(pos);                   // tell servo to go to position in variable 'pos'
-    delay(10);                          // waits 10ms for the servo to reach the position
-  }
+  int cabin_state = digitalRead(RFD_IN);
 
-  for (pos = 180; pos >= 0; pos -= 1) { // rotate from 180 degrees to 0 degrees
-    servo.write(pos);                   // tell servo to go to position in variable 'pos'
-    delay(10);                          // waits 10ms for the servo to reach the position
+  if (cabin_state == SECURED) {
+    // seatbelt ON
+    
+    // door CLOSE
+
+    // door LOCK
+
+  } else if (cabin_state == OPEN) {
+    // door UNLOCK
+
+    // door OPEN
+
+    // seatbelt OFF
   }
 }
