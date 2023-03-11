@@ -12,6 +12,13 @@
 #define OPEN 0
 #define SECURED 1
 
+// motor specs
+#define BELT_OFF 115
+#define BELT_ON 75
+#define BELT_ACT_FREQ 300
+
+
+
 void setup() {
     // teensey serial config
   Serial.begin(9600);
@@ -22,6 +29,9 @@ void setup() {
   // OUTPUT PIN CONFIG
   pinMode(RFD_IN, INPUT);
 
+  pinMode(BELT_ACT, OUTPUT);
+  analogWriteFrequency(BELT_ACT, BELT_ACT_FREQ);
+
   // PIN INIT VALUE
   // digitalWrite(LED_OUT, OPEN);
 }
@@ -30,7 +40,9 @@ void loop() {
   int cabin_state = digitalRead(RFD_IN);
 
   if (cabin_state == SECURED) {
+
     // seatbelt ON
+    analogWrite(BELT_ACT, BELT_ON)
     
     // door CLOSE
 
@@ -42,5 +54,6 @@ void loop() {
     // door OPEN
 
     // seatbelt OFF
+    analogWrite(BELT_ACT, BELT_OFF)
   }
 }
