@@ -1,6 +1,6 @@
 #include "DoorServo.h"
 
-DoorServo Servo1(6, 0);
+DoorServo Servo1(6, 1);
 
 void setup() {
   // put your setup code here, to run once:

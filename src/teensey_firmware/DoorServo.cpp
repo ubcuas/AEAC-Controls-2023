@@ -14,14 +14,22 @@ DoorServo::DoorServo(uint8_t pin, bool debug){
 }
 
 void DoorServo::open(){
-    analogWrite(Servopin, OpenPos);
+    for(int i = ClosePos; i >= OpenPos; i--){
+    analogWrite(Servopin, i);
+    delay(Delay);
+  }
+    //analogWrite(Servopin, OpenPos);
     if(print){
         Serial.println("Servo Opened");
     }
 }
 
 void DoorServo::close(){
-    analogWrite(Servopin, ClosePos);
+  for(int i = OpenPos; i <= ClosePos; i++){
+    analogWrite(Servopin, i);
+    delay(Delay);
+  }
+    //analogWrite(Servopin, ClosePos);
     if(print){
         Serial.println("Servo Closed");
     }

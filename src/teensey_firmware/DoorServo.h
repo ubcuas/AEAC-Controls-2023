@@ -13,9 +13,10 @@
 
 class DoorServo {
     private:
-    uint16_t OpenPos = 400;
-    uint16_t ClosePos = 150;
+    uint16_t OpenPos = 180;
+    uint16_t ClosePos = 380;
     uint8_t Servopin;
+    uint8_t Delay = 5;
     //HardwareSerial Serial;
     bool print;
 
