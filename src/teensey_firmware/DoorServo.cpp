@@ -1,4 +1,6 @@
-#include "LightPCB.h"
+#include "HardwareSerial.h"
+#include "Stream.h"
+#include "DoorServo.h"
 DoorServo::DoorServo(uint8_t pin, bool debug){
     Servopin = pin;
     print = debug;
