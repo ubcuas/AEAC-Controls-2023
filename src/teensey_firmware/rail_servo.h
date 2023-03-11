@@ -9,8 +9,9 @@
 
 class RailServo {
     private:
-    uint16_t open_pos = 80;
-    uint16_t close_pos = 155;
+    uint16_t open_pos = 75;
+    uint16_t mid_pos = 100;
+    uint16_t close_pos = 115;
     uint8_t servo_pin;
     //HardwareSerial Serial;
     bool print;
@@ -19,5 +20,6 @@ class RailServo {
     RailServo(uint8_t pin, bool debug);
     void open();
     void close();
+    void mid();
 };
 #endif

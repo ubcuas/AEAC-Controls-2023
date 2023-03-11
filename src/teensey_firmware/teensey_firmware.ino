@@ -38,6 +38,9 @@ void loop() {
       case '1':
         rail.open();
         break;
+      case '5':
+        rail.mid();
+        break;
       default:
         Serial.println("Input not Recognized");
     }

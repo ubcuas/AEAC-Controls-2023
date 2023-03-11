@@ -27,3 +27,10 @@ void RailServo::close(){
         Serial.println("Rail Closed");
     }
 }
+
+void RailServo::mid(){
+    analogWrite(servo_pin, mid_pos);
+    if(print){
+        Serial.println("Rail Midway");
+    }
+}
