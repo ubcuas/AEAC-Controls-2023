@@ -1,22 +1,75 @@
-#include <Servo.h>
+#include "LightPCB.h"
 
-Servo servo;  // create servo object to control a servo
+LightPCB L1(7, 1);
+LightPCB L2(8, 1);
+LightPCB L3(9, 1);
 
-int pos = 0;    // variable to store the servo position
+volatile uint8_t LightSel = 0;  
+
+void Arm();
+void Disarm();
 
 void setup() {
-  servo.attach(9);  // attaches the servo on pin 9 to the servo object
+  // put your setup code here, to run once:
+  Serial.begin(9600);
 }
 
 void loop() {
-  for (pos = 0; pos <= 180; pos += 1) { // rotate from 0 degrees to 180 degrees
-    // in steps of 1 degree
-    servo.write(pos);                   // tell servo to go to position in variable 'pos'
-    delay(10);                          // waits 10ms for the servo to reach the position
-  }
+  // put your main code here, to run repeatedly:
+   while (Serial.available() > 0) {
+    // look for the next valid integer in the incoming serial stream:
+    char mode = Serial.read();
+    // look for the newline. That's the end of your sentence:
+    if (Serial.read() == '\n') {}
+    Serial.printf("Read This %c\n", mode);
+    switch(mode){
+      case 'a':
+        Arm();  
+        break;
+      case 'd':
+        Disarm();
+        break;
+      case 's':
+        LightSel++;
+        if(LightSel>2){
+          LightSel = 0;
+        }
+        Serial.printf("Active Light PCB is : L%d\n", (LightSel+1));
+        break;
+      default:
+        Serial.println("Input not Recognized");
+    }
+   }
+}
 
-  for (pos = 180; pos >= 0; pos -= 1) { // rotate from 180 degrees to 0 degrees
-    servo.write(pos);                   // tell servo to go to position in variable 'pos'
-    delay(10);                          // waits 10ms for the servo to reach the position
+void Arm(){
+  switch (LightSel){
+    case 0:
+      L1.ArmCabin();
+      break;
+    case 1:
+      L2.ArmCabin();
+      break;
+    case 2:
+      L3.ArmCabin();
+      break;
+    default:
+      break;
+  }
+}
+
+void Disarm(){
+  switch (LightSel){
+    case 0:
+      L1.DisarmCabin();
+      break;
+    case 1:
+      L2.DisarmCabin();
+      break;
+    case 2:
+      L3.DisarmCabin();
+      break;
+    default:
+      break;
   }
 }
