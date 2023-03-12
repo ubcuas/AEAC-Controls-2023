@@ -4,7 +4,7 @@ void setup() {
   pinMode(PIN7, OUTPUT);
   Serial.begin(9600);
 
-  digitalWrite(PI7N, 1);
+  digitalWrite(PIN7, 1);
 }
 
 void loop() {
