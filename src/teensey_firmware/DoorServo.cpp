@@ -1,12 +1,14 @@
 #include "HardwareSerial.h"
 #include "Stream.h"
 #include "DoorServo.h"
-DoorServo::DoorServo(uint8_t pin, bool debug){
+
+DoorServo::DoorServo(uint8_t pin, bool debug, uint16_t Freq){
     Servopin = pin;
     print = debug;
+    Frequency = Freq;
     //Serial = serialport;
     pinMode(Servopin, OUTPUT);
-    analogWriteFrequency(Servopin, FREQUENCY); 
+    analogWriteFrequency(Servopin, Frequency); 
     analogWriteResolution(12);
     if(print){
         Serial.println("Servo Setup Done!");
@@ -32,5 +34,12 @@ void DoorServo::close(){
     //analogWrite(Servopin, ClosePos);
     if(print){
         Serial.println("Servo Closed");
+    }
+}
+
+void DoorServo::turnOff{
+    analogWrite(Servopin, 0);
+    if(print){
+        Serial.println("Servo Turned OFF");
     }
 }

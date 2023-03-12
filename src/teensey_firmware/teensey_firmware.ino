@@ -1,7 +1,7 @@
 #include "DoorServo.h"
 #include "LightPCB.h"
 
-DoorServo Servo1(6, 1);
+DoorServo Servo1(6, 1, 50);
 
 LightPCB L1(7, 1);
 LightPCB L2(8, 1);
