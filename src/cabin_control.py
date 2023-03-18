@@ -54,11 +54,14 @@ class CabinControl:
 
     def setCabinState(self, state):
         uaslog.debug("Setting Cabin State to {}\r\n".format(self.cabin_state))
-        self.cabin_state = state
-        self.change_state = 1
+        if (state != '0' and state != '1'):
+            uaslog.warning("Invalid Command. Valid commands include [0] to Disarm Cabin or [1] to Open Cabin.\r\n")
+        else:
+            self.cabin_state = state
+            self.change_state = 1
 
     def cleanup(self):
         uaslog.info("Cleaning up and closing Serial ports.\r\n")
-        self.uno_port.write('0'.encode('utf_8'))
+        self.uno_port.write('0'.encode('utf_8'))  # open cabin
         time.sleep(0.1)
         self.uno_port.close()

@@ -12,7 +12,7 @@ void setup() {
 void loop() {
   int out;
 
-  // Keyboard input - TEMP!!
+  // serial input
   if (Serial.available() > 0) {
     char key = Serial.read();
     if (key == '1') {

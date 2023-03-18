@@ -8,7 +8,7 @@
 
 */
 
-#define PIN_SERVOR 6
+#define PIN_SERVOR 3
 
 
 void setup() {
@@ -20,7 +20,7 @@ void setup() {
 }
 
 void loop() {
-  int out;
+  // int out;
   int pos;
 /*
   for (int i = 1; i<255; i++){
@@ -39,7 +39,7 @@ void loop() {
 
   while (Serial.available() > 0) {
 
-    int pos = Serial.parseInt();
+    pos = Serial.parseInt();
     if (Serial.read() == '\n') {}
     Serial.printf("Keyboard input: %d\n", pos);
     analogWrite(PIN_SERVOR, pos);
