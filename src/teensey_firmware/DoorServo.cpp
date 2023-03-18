@@ -37,9 +37,14 @@ void DoorServo::close(){
     }
 }
 
-void DoorServo::turnOff{
+void DoorServo::turnOff(){
     analogWrite(Servopin, 0);
     if(print){
         Serial.println("Servo Turned OFF");
     }
+}
+
+void DoorServo::updateParams(uint16_t open, uint16_t close){
+    OpenPos = open;
+    ClosePos = close;
 }

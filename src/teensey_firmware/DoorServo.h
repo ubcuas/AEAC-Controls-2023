@@ -23,5 +23,6 @@ class DoorServo {
     void open();
     void close();
     void turnOff();
+    void updateParams(uint16_t open, uint16_t close);
 };
 #endif

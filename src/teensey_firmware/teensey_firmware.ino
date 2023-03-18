@@ -25,6 +25,11 @@
 #define PrintDebug 1
 DoorServo doorServo(DOOR_SERVO, PrintDebug, FREQUENCY);
 
+//Cabin Door Lock
+#define LOCKOPEN 50
+#define LOCKCLOSE 230
+DoorServo lockServo(DOOR_LOCK, PrintDebug, FREQUENCY);
+
 //Cabin Lights 
 LightPCB LeftLight(LED_LEFT, PrintDebug);
 LightPCB RightLight(LED_RIGHT, PrintDebug);
@@ -45,6 +50,9 @@ void setup() {
   pinMode(BELT_ACT, OUTPUT);
   analogWriteFrequency(BELT_ACT, BELT_ACT_FREQ);
 
+  //Setup LockServo Open/CloseValues
+  lockServo.updateParams(LOCKOPEN, LOCKCLOSE);
+
   // PIN INIT VALUE
   // digitalWrite(LED_OUT, OPEN);
 }
@@ -55,24 +63,25 @@ void loop() {
   if (cabin_state == SECURED) {
 
     // seatbelt ON
-    analogWrite(BELT_ACT, BELT_ON)
+    analogWrite(BELT_ACT, BELT_ON);
     
     // door CLOSE
-    DoorServo.close();
+    doorServo.close();
     // door LOCK
-
+    lockServo.close();
     // cabin Lights Armed
     LeftLight.ArmCabin();
     RightLight.ArmCabin();
     BottomLight.ArmCabin();
 
-  } else if (cabin_state == OPEN) {
+  } 
+  else if (cabin_state == OPEN) {
     // door UNLOCK
-    
+    lockServo.open();
     // door OPEN
-    DoorServo.open();
+    doorServo.open();
     // seatbelt OFF
-    analogWrite(BELT_ACT, BELT_OFF)
+    analogWrite(BELT_ACT, BELT_OFF);
 
     // cabin Lights Un-Armed
     LeftLight.DisarmCabin();
