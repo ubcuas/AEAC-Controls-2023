@@ -15,8 +15,8 @@
 #define SECURED 1
 
 // motor specs
-#define BELT_OFF 115
-#define BELT_ON 75
+#define BELT_OFF 1980
+#define BELT_ON 1150
 #define BELT_ACT_FREQ 300
 
 //Cabin door
@@ -25,15 +25,16 @@
 DoorServo doorServo(DOOR_SERVO, PrintDebug, SERVO_FREQ);
 
 //Cabin Door Lock
-#define LOCKOPEN 50
-#define LOCKCLOSE 230
-DoorServo lockServo(DOOR_LOCK, PrintDebug, SERVO_FREQ);
+#define LOCKOPEN 1980
+#define LOCKCLOSE 1150
+#define LockFrequency 300
+DoorServo lockServo(DOOR_LOCK, PrintDebug, LockFrequency);
 
 //Cabin Lights 
 LightPCB LeftLight(PAX_LED, PrintDebug);
 LightPCB RightLight(PAX_LED, PrintDebug);
 LightPCB BottomLight(PAX_LED, PrintDebug);
-int cabin_state = OPEN;// = digitalRead(RFD_IN);
+int cabin_state = 2;// = digitalRead(RFD_IN);
 bool changed = false;
 
 void setup() {
@@ -46,12 +47,13 @@ void setup() {
   pinMode(RFD_IN, INPUT);
 
   // OUTPUT PIN CONFIG
-  pinMode(RFD_IN, INPUT);
   pinMode(BELT_ACT, OUTPUT);
   analogWriteFrequency(BELT_ACT, BELT_ACT_FREQ);
 
   //Setup LockServo Open/CloseValues
   lockServo.updateParams(LOCKOPEN, LOCKCLOSE);
+
+  initAudio();
 }
 
 void loop() {
@@ -98,11 +100,11 @@ void loop() {
         break;
     }
   }
-  if (cabin_state == SECURED) {
+  if (cabin_state == SECURED && changed == true) {
     changed = false;
     // seatbelt ON
     analogWrite(BELT_ACT, BELT_ON);
-    delay(1000);
+    //delay(1000);
     
     // door CLOSE
     doorServo.close();
@@ -116,7 +118,7 @@ void loop() {
     RightLight.ArmCabin();
     BottomLight.ArmCabin();
   } 
-  else if (cabin_state == OPEN) {
+  else if (cabin_state == OPEN  &&  changed == true) {
     changed = false;
     // door UNLOCK
     lockServo.open();
@@ -124,7 +126,7 @@ void loop() {
 
     // door OPEN
     doorServo.open();
-    delay(1000);
+    //delay(1000);
 
     // seatbelt OFF
     analogWrite(BELT_ACT, BELT_OFF);

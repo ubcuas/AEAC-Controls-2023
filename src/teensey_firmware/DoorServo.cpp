@@ -6,6 +6,7 @@ DoorServo::DoorServo(uint8_t pin, bool debug, uint16_t Freq){
     Servopin = pin;
     print = debug;
     Frequency = Freq;
+    state = 0;
     //Serial = serialport;
     pinMode(Servopin, OUTPUT);
     analogWriteFrequency(Servopin, Frequency); 
@@ -16,29 +17,56 @@ DoorServo::DoorServo(uint8_t pin, bool debug, uint16_t Freq){
 }
 
 void DoorServo::open(){
-    for(int i = ClosePos; i >= OpenPos; i--){
-    analogWrite(Servopin, i);
-    delay(Delay);
-  }
-    //analogWrite(Servopin, OpenPos);
-    if(print){
-        Serial.println("Servo Opened");
+    if(state != 1){
+      state = 1;
+      if(ClosePos > OpenPos){
+        for(int i = ClosePos; i >= OpenPos; i--){
+        analogWrite(Servopin, i);
+        //Serial.printf("pos: %d\n", i);
+        delay(Delay);
+        }
+      }
+      else{
+        for(int i = ClosePos; i <= OpenPos; i++){
+        analogWrite(Servopin, i);
+        //Serial.printf("pos: %d\n", i);
+        delay(Delay);
+        }  
+      }
+      //analogWrite(Servopin, OpenPos);
+      if(print){
+          Serial.println("Servo Opened");
+
+      }
     }
 }
 
 void DoorServo::close(){
-  for(int i = OpenPos; i <= ClosePos; i++){
-    analogWrite(Servopin, i);
-    delay(Delay);
+  if(state != 2){
+    state = 2;
+    if(OpenPos < ClosePos){
+        for(int i = OpenPos; i <= ClosePos; i++){
+        analogWrite(Servopin, i);
+        //Serial.printf("pos: %d\n", i);
+        delay(Delay);
+        }
+      }
+    else{
+        for(int i = OpenPos; i >= ClosePos; i--){
+        analogWrite(Servopin, i);
+        //Serial.printf("pos: %d\n", i);
+        delay(Delay);
+        }  
+      }
+      //analogWrite(Servopin, ClosePos);
+      if(print){
+          Serial.println("Servo Closed");
+      }
   }
-    //analogWrite(Servopin, ClosePos);
-    if(print){
-        Serial.println("Servo Closed");
-    }
 }
 
 void DoorServo::turnOff(){
-    analogWrite(Servopin, 0);
+    analogWrite(Servopin, 0);    
     if(print){
         Serial.println("Servo Turned OFF");
     }
