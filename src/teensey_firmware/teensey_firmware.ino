@@ -1,5 +1,7 @@
 #include "DoorServo.h"
 #include "LightPCB.h"
+#include "AudioFunctions.h"
+
 
 // Teensey 4.0 firware state machine for automating cabin belt and door systems using RFD input
 #define RFD_IN 0
@@ -31,10 +33,14 @@ DoorServo lockServo(DOOR_LOCK, PrintDebug, SERVO_FREQ);
 LightPCB LeftLight(PAX_LED, PrintDebug);
 LightPCB RightLight(PAX_LED, PrintDebug);
 LightPCB BottomLight(PAX_LED, PrintDebug);
+int cabin_state = OPEN;// = digitalRead(RFD_IN);
+bool changed = false;
 
 void setup() {
-    // teensey serial config
+  // teensey serial config
   Serial.begin(9600);
+    while (!Serial && millis () < 3000)
+    ;
 
   // INPUT PIN CONFIG
   pinMode(RFD_IN, INPUT);
@@ -49,10 +55,51 @@ void setup() {
 }
 
 void loop() {
-  int cabin_state = digitalRead(RFD_IN);
+  //int cabin_state;// = digitalRead(RFD_IN);
 
+  while (Serial.available() > 0) {
+    char mode = Serial.read();
+    if (Serial.read() == '\n') {}
+    switch(mode){
+      case 'c':
+        cabin_state = SECURED;
+        changed = true;
+        break;
+      case 'o':
+        cabin_state = OPEN;
+        changed = true;
+        break;
+      case 'h':
+        Help();
+        break;
+      case 'x':
+        ToggleLoop();
+        break;
+      case 's':
+        Stop();
+        break;
+      case 'f':
+        MyList.Fwd();
+        break;
+      case 'b':
+        MyList.Bwd();
+        break;
+      case 'l':
+        MyList.DisplayCurrentList();
+        break;  
+      default:
+        int tracknum = MyList.isInList(mode);
+        if(tracknum != -1){
+          playFile(MyList.SendTrack((uint16_t)tracknum));
+        }
+        else{
+          Serial.println("Input not Recognized");
+        }
+        break;
+    }
+  }
   if (cabin_state == SECURED) {
-
+    changed = false;
     // seatbelt ON
     analogWrite(BELT_ACT, BELT_ON);
     delay(1000);
@@ -70,6 +117,7 @@ void loop() {
     BottomLight.ArmCabin();
   } 
   else if (cabin_state == OPEN) {
+    changed = false;
     // door UNLOCK
     lockServo.open();
     delay(1000);
