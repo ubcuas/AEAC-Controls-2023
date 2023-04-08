@@ -12,7 +12,7 @@ class LightPCB {
     bool print;
 
     public:
-    LightPCB(uint8_t pin, bool debug);
+    void Setup(uint8_t pin, bool debug);
     void ArmCabin();        //blinking
     void DisarmCabin();     //not blinking
 };

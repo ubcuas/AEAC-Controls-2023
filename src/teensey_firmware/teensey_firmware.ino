@@ -1,7 +1,7 @@
+//Libraries
 #include "DoorServo.h"
 #include "LightPCB.h"
 #include "AudioFunctions.h"
-
 
 // Teensey 4.0 firware state machine for automating cabin belt and door systems using RFD input
 #define RFD_IN 0
@@ -31,9 +31,7 @@ DoorServo doorServo(DOOR_SERVO, PrintDebug, SERVO_FREQ);
 DoorServo lockServo(DOOR_LOCK, PrintDebug, LockFrequency);
 
 //Cabin Lights 
-LightPCB LeftLight(PAX_LED, PrintDebug);
-LightPCB RightLight(PAX_LED, PrintDebug);
-LightPCB BottomLight(PAX_LED, PrintDebug);
+LightPCB CabinLight;
 int cabin_state = 2;// = digitalRead(RFD_IN);
 bool changed = false;
 
@@ -53,12 +51,17 @@ void setup() {
   //Setup LockServo Open/CloseValues
   lockServo.updateParams(LOCKOPEN, LOCKCLOSE);
 
+  //Configure Cabin Light
+  CabinLight.Setup(PAX_LED, PrintDebug);
+
+  //Initialize the audio
   initAudio();
 }
 
 void loop() {
   //int cabin_state;// = digitalRead(RFD_IN);
 
+  //Take Input from User via serial port
   while (Serial.available() > 0) {
     char mode = Serial.read();
     if (Serial.read() == '\n') {}
@@ -70,12 +73,6 @@ void loop() {
       case 'o':
         cabin_state = OPEN;
         changed = true;
-        break;
-      case 'h':
-        Help();
-        break;
-      case 'x':
-        ToggleLoop();
         break;
       case 's':
         Stop();
@@ -114,9 +111,7 @@ void loop() {
     lockServo.close();
 
     // cabin Lights Armed
-    LeftLight.ArmCabin();
-    RightLight.ArmCabin();
-    BottomLight.ArmCabin();
+    CabinLight.ArmCabin();
   } 
   else if (cabin_state == OPEN  &&  changed == true) {
     changed = false;
@@ -132,8 +127,6 @@ void loop() {
     analogWrite(BELT_ACT, BELT_OFF);
 
     // cabin Lights Un-Armed
-    LeftLight.DisarmCabin();
-    RightLight.DisarmCabin();
-    BottomLight.DisarmCabin();
+    CabinLight.DisarmCabin();
   }
 }

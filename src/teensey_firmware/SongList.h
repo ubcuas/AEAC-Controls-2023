@@ -8,7 +8,6 @@
 #include <SD.h>
 #include <SerialFlash.h>
 #include <String.h>
-#include "Assets.h"
 
 #define ListSize 5
 #define MaxName 25

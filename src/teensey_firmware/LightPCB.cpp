@@ -1,9 +1,8 @@
 #include "LightPCB.h"
 
-LightPCB::LightPCB(uint8_t pin, bool debug){
+void LightPCB::Setup(uint8_t pin, bool debug){
     Pin = pin;
     print = debug;
-    //Serial = serialport;
     pinMode(Pin, OUTPUT);
     if(print){
         Serial.println("LightPCB Setup Done!");

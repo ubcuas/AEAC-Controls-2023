@@ -42,7 +42,7 @@ void SongList::DisplayCurrentList(){
 void SongList::DisplayListContents(){
   Serial.println("Full List of Songs Shown Below:");
   Serial.println("------------------------------");
-  for(int i = 0; i < numsongs; i++){
+  for(uint16_t i = 0; i < numsongs; i++){
     Serial.printf("%d. ",i);
     Serial.println(Songlist[i]);
   }
