@@ -1,39 +1,66 @@
+// Teensey 4.0 firware state machine for automating cabin belt and door systems using RFD input
+
 //Libraries
 #include "DoorServo.h"
 #include "LightPCB.h"
+#include "InteriorLight.h"
 #include "AudioFunctions.h"
 
-// Teensey 4.0 firware state machine for automating cabin belt and door systems using RFD input
+
+// Pin Map
 #define RFD_IN 0
 #define DOOR_SERVO 1
 #define DOOR_LOCK 2
 #define BELT_ACT 3
 #define PAX_LED 4
+#define INTERIOR_LED 15
 
-// cabin states
+//Cabin States
 #define OPEN 0
 #define SECURED 1
 
-// motor specs
-#define BELT_OFF 1980
-#define BELT_ON 1150
-#define BELT_ACT_FREQ 300
-
-//Cabin door
-#define SERVO_FREQ 50
+//Seat Belt
+#define BELT_OPEN 1980
+#define BELT_CLOSE 1150
+#define BELT_FREQ 300
+#define BELT_DELAY 1
 #define PrintDebug 1
-DoorServo doorServo(DOOR_SERVO, PrintDebug, SERVO_FREQ);
+DoorServo seatBeltServo(BELT_ACT, PrintDebug, BELT_FREQ, BELT_OPEN, BELT_CLOSE, BELT_DELAY);
+
+//Cabin Door
+#define DOOR_OPEN 220
+#define DOOR_CLOSE 450
+#define DOOR_FREQ 50
+#define DOOR_DELAY 5
+#define PrintDebug 1
+DoorServo doorServo(DOOR_SERVO, PrintDebug, DOOR_FREQ, DOOR_OPEN, DOOR_CLOSE, DOOR_DELAY);
 
 //Cabin Door Lock
-#define LOCKOPEN 1980
-#define LOCKCLOSE 1150
-#define LockFrequency 300
-DoorServo lockServo(DOOR_LOCK, PrintDebug, LockFrequency);
+#define LOCK_OPEN 1980
+#define LOCK_CLOSE 1150
+#define LOCK_FREQ 300
+#define LOCK_DELAY 1
+DoorServo lockServo(DOOR_LOCK, PrintDebug, LOCK_FREQ, LOCK_OPEN, LOCK_CLOSE, LOCK_DELAY);
 
-//Cabin Lights 
+//Exterior Lights 
 LightPCB CabinLight;
+
+//Interior Lights
+
+
+#define NUM_LEDS_PER_STRIP 29
+#define NUM_STRIPS 1
+#define NUM_LEDS  NUM_LEDS_PER_STRIP * NUM_STRIPS
+#define INTERIOR_LIGHT_BRIGHTNESS 50
+CRGB leds[NUM_LEDS_PER_STRIP * NUM_STRIPS];
+
+InteriorLight CabinInteriorLight; 
+
+
 int cabin_state = 2;// = digitalRead(RFD_IN);
 bool changed = false;
+
+
 
 void setup() {
   // teensey serial config
@@ -43,16 +70,14 @@ void setup() {
 
   // INPUT PIN CONFIG
   pinMode(RFD_IN, INPUT);
-
-  // OUTPUT PIN CONFIG
-  pinMode(BELT_ACT, OUTPUT);
-  analogWriteFrequency(BELT_ACT, BELT_ACT_FREQ);
-
-  //Setup LockServo Open/CloseValues
-  lockServo.updateParams(LOCKOPEN, LOCKCLOSE);
-
-  //Configure Cabin Light
+  
+  //Configure Exterior Light
   CabinLight.Setup(PAX_LED, PrintDebug);
+
+  //Configure Interior Light
+  FastLED.addLeds<NUM_STRIPS, WS2812B, INTERIOR_LED, GRB>(leds, NUM_LEDS_PER_STRIP); 
+  CabinInteriorLight.Setup(leds, NUM_LEDS, INTERIOR_LIGHT_BRIGHTNESS, PrintDebug);
+
 
   //Initialize the audio
   initAudio();
@@ -99,9 +124,11 @@ void loop() {
   }
   if (cabin_state == SECURED && changed == true) {
     changed = false;
+    CabinInteriorLight.ArmCabin(leds);
+    
     // seatbelt ON
-    analogWrite(BELT_ACT, BELT_ON);
-    //delay(1000);
+    seatBeltServo.close();
+    delay(1000);
     
     // door CLOSE
     doorServo.close();
@@ -109,22 +136,25 @@ void loop() {
 
     // door LOCK
     lockServo.close();
-
+    delay(1000);
     // cabin Lights Armed
     CabinLight.ArmCabin();
   } 
   else if (cabin_state == OPEN  &&  changed == true) {
     changed = false;
+    CabinInteriorLight.DisarmCabin(leds);
+
     // door UNLOCK
     lockServo.open();
     delay(1000);
 
     // door OPEN
     doorServo.open();
-    //delay(1000);
+    delay(1000);
 
     // seatbelt OFF
-    analogWrite(BELT_ACT, BELT_OFF);
+    seatBeltServo.open();
+    delay(1000);
 
     // cabin Lights Un-Armed
     CabinLight.DisarmCabin();

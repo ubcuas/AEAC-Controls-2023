@@ -2,10 +2,13 @@
 #include "Stream.h"
 #include "DoorServo.h"
 
-DoorServo::DoorServo(uint8_t pin, bool debug, uint16_t Freq){
+DoorServo::DoorServo(uint8_t pin, bool debug, uint16_t Freq, uint16_t open, uint16_t close, uint16_t delay_time){
     Servopin = pin;
     print = debug;
     Frequency = Freq;
+    OpenPos = open;
+    ClosePos = close;
+    Delay = delay_time;
     state = 0;
     //Serial = serialport;
     pinMode(Servopin, OUTPUT);
@@ -72,7 +75,8 @@ void DoorServo::turnOff(){
     }
 }
 
-void DoorServo::updateParams(uint16_t open, uint16_t close){
+void DoorServo::updateParams(uint16_t open, uint16_t close,  uint16_t delay_time){
     OpenPos = open;
     ClosePos = close;
+    Delay = delay_time;
 }
