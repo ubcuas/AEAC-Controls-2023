@@ -41,6 +41,7 @@ void initAudio(){
   }
   LastDir = SD.open("/");
   MyList.SearchSongs(LastDir);
+  playFile("startup.wav");
   Serial.println("Audio Setup Done");
 }
 

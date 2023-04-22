@@ -124,6 +124,7 @@ void loop() {
   }
   if (cabin_state == SECURED && changed == true) {
     changed = false;
+    Stop();
     CabinInteriorLight.ArmCabin(leds);
     
     // seatbelt ON
@@ -139,9 +140,11 @@ void loop() {
     delay(1000);
     // cabin Lights Armed
     CabinLight.ArmCabin();
+    playFile("Beep.wav");
   } 
   else if (cabin_state == OPEN  &&  changed == true) {
     changed = false;
+    playFile("PIB.wav");
     CabinInteriorLight.DisarmCabin(leds);
 
     // door UNLOCK
